@@ -177,7 +177,7 @@ bp_unpack_value (struct bitpack_d *bp, unsigned nbits)
      switch to the next one.  */
   if (pos + nbits > BITS_PER_BITPACK_WORD)
     {
-      bp->word = val 
+      bp->word = val
 	= streamer_read_uhwi ((class lto_input_block *)bp->stream);
       bp->pos = nbits;
       return val & mask;
@@ -192,11 +192,15 @@ bp_unpack_value (struct bitpack_d *bp, unsigned nbits)
 /* Unpacks a polynomial value from the bit-packing context BP in which each
    coefficient has NBITS bits.  */
 inline poly_int<NUM_POLY_INT_COEFFS, bitpack_word_t>
-bp_unpack_poly_value (struct bitpack_d *bp, unsigned nbits)
-{
+bp_unpack_poly_value(struct bitpack_d *bp, unsigned nbits,
+                     uint8_t packed_poly_int_coeffs) {
+  int unpack_times = MIN(packed_poly_int_coeffs, NUM_POLY_INT_COEFFS);
   poly_int_pod<NUM_POLY_INT_COEFFS, bitpack_word_t> x;
-  for (int i = 0; i < NUM_POLY_INT_COEFFS; ++i)
-    x.coeffs[i] = bp_unpack_value (bp, nbits);
+  for (int i = 0; i < unpack_times; ++i)
+      x.coeffs[i] = bp_unpack_value(bp, nbits);
+  for (int i = unpack_times; i < NUM_POLY_INT_COEFFS; ++i) {
+      x.coeffs[i] = 0;
+  }
   return x;
 }
 

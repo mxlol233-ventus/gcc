@@ -120,7 +120,8 @@ host_triplet = @host@
 target_triplet = @target@
 @PLUGIN_NVPTX_TRUE@am__append_1 = libgomp-plugin-nvptx.la
 @PLUGIN_GCN_TRUE@am__append_2 = libgomp-plugin-gcn.la
-@USE_FORTRAN_TRUE@am__append_3 = openacc.f90
+@PLUGIN_RISCV_VENTUS_TRUE@am__append_3 = libgomp-plugin-ventus.la
+@USE_FORTRAN_TRUE@am__append_4 = openacc.f90
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../config/acx.m4 \
@@ -184,8 +185,9 @@ LTLIBRARIES = $(toolexeclib_LTLIBRARIES)
 am__DEPENDENCIES_1 =
 @PLUGIN_GCN_TRUE@libgomp_plugin_gcn_la_DEPENDENCIES = libgomp.la \
 @PLUGIN_GCN_TRUE@	$(am__DEPENDENCIES_1)
+am__dirstamp = $(am__leading_dot)dirstamp
 @PLUGIN_GCN_TRUE@am_libgomp_plugin_gcn_la_OBJECTS =  \
-@PLUGIN_GCN_TRUE@	libgomp_plugin_gcn_la-plugin-gcn.lo
+@PLUGIN_GCN_TRUE@	plugin/libgomp_plugin_gcn_la-plugin-gcn.lo
 libgomp_plugin_gcn_la_OBJECTS = $(am_libgomp_plugin_gcn_la_OBJECTS)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -199,8 +201,7 @@ libgomp_plugin_gcn_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 @PLUGIN_GCN_TRUE@	$(toolexeclibdir)
 @PLUGIN_NVPTX_TRUE@libgomp_plugin_nvptx_la_DEPENDENCIES = libgomp.la \
 @PLUGIN_NVPTX_TRUE@	$(am__DEPENDENCIES_1)
-@PLUGIN_NVPTX_TRUE@am_libgomp_plugin_nvptx_la_OBJECTS =  \
-@PLUGIN_NVPTX_TRUE@	libgomp_plugin_nvptx_la-plugin-nvptx.lo
+@PLUGIN_NVPTX_TRUE@am_libgomp_plugin_nvptx_la_OBJECTS = plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo
 libgomp_plugin_nvptx_la_OBJECTS =  \
 	$(am_libgomp_plugin_nvptx_la_OBJECTS)
 libgomp_plugin_nvptx_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
@@ -209,6 +210,17 @@ libgomp_plugin_nvptx_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
 	$(libgomp_plugin_nvptx_la_LDFLAGS) $(LDFLAGS) -o $@
 @PLUGIN_NVPTX_TRUE@am_libgomp_plugin_nvptx_la_rpath = -rpath \
 @PLUGIN_NVPTX_TRUE@	$(toolexeclibdir)
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_DEPENDENCIES =  \
+@PLUGIN_RISCV_VENTUS_TRUE@	libgomp.la $(am__DEPENDENCIES_1)
+@PLUGIN_RISCV_VENTUS_TRUE@am_libgomp_plugin_ventus_la_OBJECTS = plugin/libgomp_plugin_ventus_la-plugin-ventus.lo
+libgomp_plugin_ventus_la_OBJECTS =  \
+	$(am_libgomp_plugin_ventus_la_OBJECTS)
+libgomp_plugin_ventus_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+	$(libgomp_plugin_ventus_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
+	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(libgomp_plugin_ventus_la_LDFLAGS) $(LDFLAGS) -o $@
+@PLUGIN_RISCV_VENTUS_TRUE@am_libgomp_plugin_ventus_la_rpath = -rpath \
+@PLUGIN_RISCV_VENTUS_TRUE@	$(toolexeclibdir)
 @USE_FORTRAN_TRUE@am__objects_1 = openacc.lo
 am_libgomp_la_OBJECTS = alloc.lo atomic.lo barrier.lo critical.lo \
 	env.lo error.lo icv.lo icv-device.lo iter.lo iter_ull.lo \
@@ -268,7 +280,8 @@ am__v_FCLD_ = $(am__v_FCLD_@AM_DEFAULT_V@)
 am__v_FCLD_0 = @echo "  FCLD    " $@;
 am__v_FCLD_1 = 
 SOURCES = $(libgomp_plugin_gcn_la_SOURCES) \
-	$(libgomp_plugin_nvptx_la_SOURCES) $(libgomp_la_SOURCES)
+	$(libgomp_plugin_nvptx_la_SOURCES) \
+	$(libgomp_plugin_ventus_la_SOURCES) $(libgomp_la_SOURCES)
 AM_V_DVIPS = $(am__v_DVIPS_@AM_V@)
 am__v_DVIPS_ = $(am__v_DVIPS_@AM_DEFAULT_V@)
 am__v_DVIPS_0 = @echo "  DVIPS   " $@;
@@ -522,7 +535,8 @@ libsubincludedir = $(libdir)/gcc/$(target_alias)/$(gcc_version)/include
 AM_CPPFLAGS = $(addprefix -I, $(search_path))
 AM_CFLAGS = $(XCFLAGS)
 AM_LDFLAGS = $(XLDFLAGS) $(SECTION_LDFLAGS) $(OPT_LDFLAGS)
-toolexeclib_LTLIBRARIES = libgomp.la $(am__append_1) $(am__append_2)
+toolexeclib_LTLIBRARIES = libgomp.la $(am__append_1) $(am__append_2) \
+	$(am__append_3)
 nodist_toolexeclib_HEADERS = libgomp.spec
 
 # -Wc is only a libtool option.
@@ -549,7 +563,7 @@ libgomp_la_SOURCES = alloc.c atomic.c barrier.c critical.c env.c \
 	oacc-parallel.c oacc-host.c oacc-init.c oacc-mem.c \
 	oacc-async.c oacc-plugin.c oacc-cuda.c priority_queue.c \
 	affinity-fmt.c teams.c allocator.c oacc-profiling.c \
-	oacc-target.c $(am__append_3)
+	oacc-target.c $(am__append_4)
 
 # Nvidia PTX OpenACC plugin.
 @PLUGIN_NVPTX_TRUE@libgomp_plugin_nvptx_version_info = -version-info $(libtool_VERSION)
@@ -585,6 +599,19 @@ libgomp_la_SOURCES = alloc.c atomic.c barrier.c critical.c env.c \
 
 @PLUGIN_GCN_TRUE@libgomp_plugin_gcn_la_LIBADD = libgomp.la $(DL_LIBS)
 @PLUGIN_GCN_TRUE@libgomp_plugin_gcn_la_LIBTOOLFLAGS = --tag=disable-static
+
+# riscv ventus plugin
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_version_info = -version-info $(libtool_VERSION)
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_SOURCES = plugin/plugin-ventus.c
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_CPPFLAGS = $(AM_CPPFLAGS) \
+@PLUGIN_RISCV_VENTUS_TRUE@	-D_GNU_SOURCE
+
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_LDFLAGS = $(libgomp_plugin_ventus_version_info) \
+@PLUGIN_RISCV_VENTUS_TRUE@	$(lt_host_flags)
+
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_LIBADD =  \
+@PLUGIN_RISCV_VENTUS_TRUE@	libgomp.la $(DL_LIBS)
+@PLUGIN_RISCV_VENTUS_TRUE@libgomp_plugin_ventus_la_LIBTOOLFLAGS = --tag=disable-static
 nodist_noinst_HEADERS = libgomp_f.h
 nodist_libsubinclude_HEADERS = omp.h openacc.h acc_prof.h
 @USE_FORTRAN_TRUE@nodist_finclude_HEADERS = omp_lib.h omp_lib.f90 omp_lib.mod omp_lib_kinds.mod \
@@ -720,18 +747,35 @@ clean-toolexeclibLTLIBRARIES:
 	  echo rm -f $${locs}; \
 	  rm -f $${locs}; \
 	}
+plugin/$(am__dirstamp):
+	@$(MKDIR_P) plugin
+	@: > plugin/$(am__dirstamp)
+plugin/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) plugin/$(DEPDIR)
+	@: > plugin/$(DEPDIR)/$(am__dirstamp)
+plugin/libgomp_plugin_gcn_la-plugin-gcn.lo: plugin/$(am__dirstamp) \
+	plugin/$(DEPDIR)/$(am__dirstamp)
 
 libgomp-plugin-gcn.la: $(libgomp_plugin_gcn_la_OBJECTS) $(libgomp_plugin_gcn_la_DEPENDENCIES) $(EXTRA_libgomp_plugin_gcn_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libgomp_plugin_gcn_la_LINK) $(am_libgomp_plugin_gcn_la_rpath) $(libgomp_plugin_gcn_la_OBJECTS) $(libgomp_plugin_gcn_la_LIBADD) $(LIBS)
+plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo:  \
+	plugin/$(am__dirstamp) plugin/$(DEPDIR)/$(am__dirstamp)
 
 libgomp-plugin-nvptx.la: $(libgomp_plugin_nvptx_la_OBJECTS) $(libgomp_plugin_nvptx_la_DEPENDENCIES) $(EXTRA_libgomp_plugin_nvptx_la_DEPENDENCIES) 
 	$(AM_V_CCLD)$(libgomp_plugin_nvptx_la_LINK) $(am_libgomp_plugin_nvptx_la_rpath) $(libgomp_plugin_nvptx_la_OBJECTS) $(libgomp_plugin_nvptx_la_LIBADD) $(LIBS)
+plugin/libgomp_plugin_ventus_la-plugin-ventus.lo:  \
+	plugin/$(am__dirstamp) plugin/$(DEPDIR)/$(am__dirstamp)
+
+libgomp-plugin-ventus.la: $(libgomp_plugin_ventus_la_OBJECTS) $(libgomp_plugin_ventus_la_DEPENDENCIES) $(EXTRA_libgomp_plugin_ventus_la_DEPENDENCIES) 
+	$(AM_V_CCLD)$(libgomp_plugin_ventus_la_LINK) $(am_libgomp_plugin_ventus_la_rpath) $(libgomp_plugin_ventus_la_OBJECTS) $(libgomp_plugin_ventus_la_LIBADD) $(LIBS)
 
 libgomp.la: $(libgomp_la_OBJECTS) $(libgomp_la_DEPENDENCIES) $(EXTRA_libgomp_la_DEPENDENCIES) 
 	$(AM_V_GEN)$(libgomp_la_LINK) -rpath $(toolexeclibdir) $(libgomp_la_OBJECTS) $(libgomp_la_LIBADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f plugin/*.$(OBJEXT)
+	-rm -f plugin/*.lo
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -752,8 +796,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iter.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/iter_ull.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgomp-plugin.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lock.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loop.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/loop_ull.Plo@am__quote@
@@ -783,41 +825,54 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/teams.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/time.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/work.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@plugin/$(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@plugin/$(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@plugin/$(DEPDIR)/libgomp_plugin_ventus_la-plugin-ventus.Plo@am__quote@
 
 .c.o:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCC_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
 
-libgomp_plugin_gcn_la-plugin-gcn.lo: plugin/plugin-gcn.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_gcn_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_gcn_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libgomp_plugin_gcn_la-plugin-gcn.lo -MD -MP -MF $(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Tpo -c -o libgomp_plugin_gcn_la-plugin-gcn.lo `test -f 'plugin/plugin-gcn.c' || echo '$(srcdir)/'`plugin/plugin-gcn.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Tpo $(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugin/plugin-gcn.c' object='libgomp_plugin_gcn_la-plugin-gcn.lo' libtool=yes @AMDEPBACKSLASH@
+plugin/libgomp_plugin_gcn_la-plugin-gcn.lo: plugin/plugin-gcn.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_gcn_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_gcn_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin/libgomp_plugin_gcn_la-plugin-gcn.lo -MD -MP -MF plugin/$(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Tpo -c -o plugin/libgomp_plugin_gcn_la-plugin-gcn.lo `test -f 'plugin/plugin-gcn.c' || echo '$(srcdir)/'`plugin/plugin-gcn.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Tpo plugin/$(DEPDIR)/libgomp_plugin_gcn_la-plugin-gcn.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugin/plugin-gcn.c' object='plugin/libgomp_plugin_gcn_la-plugin-gcn.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_gcn_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_gcn_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libgomp_plugin_gcn_la-plugin-gcn.lo `test -f 'plugin/plugin-gcn.c' || echo '$(srcdir)/'`plugin/plugin-gcn.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_gcn_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_gcn_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin/libgomp_plugin_gcn_la-plugin-gcn.lo `test -f 'plugin/plugin-gcn.c' || echo '$(srcdir)/'`plugin/plugin-gcn.c
 
-libgomp_plugin_nvptx_la-plugin-nvptx.lo: plugin/plugin-nvptx.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_nvptx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_nvptx_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libgomp_plugin_nvptx_la-plugin-nvptx.lo -MD -MP -MF $(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Tpo -c -o libgomp_plugin_nvptx_la-plugin-nvptx.lo `test -f 'plugin/plugin-nvptx.c' || echo '$(srcdir)/'`plugin/plugin-nvptx.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Tpo $(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugin/plugin-nvptx.c' object='libgomp_plugin_nvptx_la-plugin-nvptx.lo' libtool=yes @AMDEPBACKSLASH@
+plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo: plugin/plugin-nvptx.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_nvptx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_nvptx_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo -MD -MP -MF plugin/$(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Tpo -c -o plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo `test -f 'plugin/plugin-nvptx.c' || echo '$(srcdir)/'`plugin/plugin-nvptx.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Tpo plugin/$(DEPDIR)/libgomp_plugin_nvptx_la-plugin-nvptx.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugin/plugin-nvptx.c' object='plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_nvptx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_nvptx_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o libgomp_plugin_nvptx_la-plugin-nvptx.lo `test -f 'plugin/plugin-nvptx.c' || echo '$(srcdir)/'`plugin/plugin-nvptx.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_nvptx_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_nvptx_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin/libgomp_plugin_nvptx_la-plugin-nvptx.lo `test -f 'plugin/plugin-nvptx.c' || echo '$(srcdir)/'`plugin/plugin-nvptx.c
+
+plugin/libgomp_plugin_ventus_la-plugin-ventus.lo: plugin/plugin-ventus.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_ventus_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_ventus_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT plugin/libgomp_plugin_ventus_la-plugin-ventus.lo -MD -MP -MF plugin/$(DEPDIR)/libgomp_plugin_ventus_la-plugin-ventus.Tpo -c -o plugin/libgomp_plugin_ventus_la-plugin-ventus.lo `test -f 'plugin/plugin-ventus.c' || echo '$(srcdir)/'`plugin/plugin-ventus.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) plugin/$(DEPDIR)/libgomp_plugin_ventus_la-plugin-ventus.Tpo plugin/$(DEPDIR)/libgomp_plugin_ventus_la-plugin-ventus.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='plugin/plugin-ventus.c' object='plugin/libgomp_plugin_ventus_la-plugin-ventus.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(libgomp_plugin_ventus_la_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libgomp_plugin_ventus_la_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o plugin/libgomp_plugin_ventus_la-plugin-ventus.lo `test -f 'plugin/plugin-ventus.c' || echo '$(srcdir)/'`plugin/plugin-ventus.c
 
 .f90.o:
 	$(AM_V_FC)$(FCCOMPILE) -c -o $@ $<
@@ -833,6 +888,7 @@ mostlyclean-libtool:
 
 clean-libtool:
 	-rm -rf .libs _libs
+	-rm -rf plugin/.libs plugin/_libs
 
 distclean-libtool:
 	-rm -f libtool config.lt
@@ -1156,6 +1212,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f plugin/$(DEPDIR)/$(am__dirstamp)
+	-rm -f plugin/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1168,7 +1226,7 @@ clean-am: clean-aminfo clean-generic clean-libtool clean-local \
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) plugin/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-local distclean-tags
@@ -1309,7 +1367,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) plugin/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-aminfo \
 	maintainer-clean-generic maintainer-clean-local

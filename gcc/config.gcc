@@ -181,7 +181,7 @@
 #			the --with-sysroot configure option or the
 #			--sysroot command line option is used this
 #			will be relative to the sysroot.
-# target_type_format_char 
+# target_type_format_char
 # 			The default character to be used for formatting
 #			the attribute in a
 #			.type symbol_name, ${t_t_f_c}<property>
@@ -527,7 +527,7 @@ powerpc*-*-*)
 pru-*-*)
 	cpu_type=pru
 	;;
-riscv*)
+riscv* | ventus*)
 	cpu_type=riscv
 	extra_objs="riscv-builtins.o riscv-c.o riscv-sr.o riscv-shorten-memrefs.o riscv-selftests.o riscv-v.o riscv-vsetvl.o"
 	extra_objs="${extra_objs} riscv-vector-builtins.o riscv-vector-builtins-shapes.o riscv-vector-builtins-bases.o"
@@ -2433,7 +2433,16 @@ riscv*-*-linux*)
 	# automatically detect that GAS supports it, yet we require it.
 	gcc_cv_initfini_array=yes
 	;;
-riscv*-*-elf* | riscv*-*-rtems*)
+
+ventus-*-none)
+	tm_file="elfos.h newlib-stdint.h ${tm_file}"
+	tmake_file="${tmake_file} riscv/t-riscv"
+	native_system_header_dir=/include
+	# Force .init_array support.  The configure script cannot always
+	# automatically detect that GAS supports it, yet we require it.
+	gcc_cv_initfini_array=yes
+	;;
+riscv*-*-elf* | riscv*-*-rtems* | ventus*-*-*)
 	tm_file="elfos.h newlib-stdint.h ${tm_file} riscv/elf.h"
 	case ${target} in
 	*-*-rtems*)
@@ -4561,6 +4570,30 @@ case "${target}" in
 				;;
 			esac
 		done
+		;;
+
+	ventus*-*-*)
+		supported_defaults="abi arch tune riscv_attribute isa_spec"
+		tm_defines="${tm_defines} TARGET_RISCV_ATTRIBUTE=1 TARGET_DEFAULT_ISA_SPEC=ISA_SPEC_CLASS_20191213"
+		with_arch="rv32gc"
+		with_isa_spec=20191213
+		PYTHON=`which python || which python3 || which python2`
+		if test "x${PYTHON}" != x; then
+			with_arch=`${PYTHON} ${srcdir}/config/riscv/arch-canonicalize -misa-spec=${with_isa_spec} ${with_arch}`
+		fi
+		tm_defines="${tm_defines} TARGET_RISCV_DEFAULT_ARCH=${with_arch}"
+		with_abi="ilp32d"
+		tm_defines="${tm_defines} TARGET_RISCV_DEFAULT_ABI=${with_abi}"
+
+		if test "x${with_multilib_list}" != xdefault; then
+			echo "--with-multilib-list=${with_multilib_list} not supported."
+			exit 1
+		fi
+
+		if test x$enable_as_accelerator = xyes; then
+			tm_file="${tm_file} riscv/offload.h"
+		fi
+
 		;;
 
 	riscv*-*-*)
