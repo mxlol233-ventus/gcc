@@ -1158,6 +1158,10 @@ for tgt in `echo $enable_offload_targets | sed 's/,/ /g'`; do
   	omp_device_property=omp-device-properties-nvptx
   	omp_device_property_tmake_file="${omp_device_property_tmake_file} \$(srcdir)/config/nvptx/t-omp-device"
   	;;
+    ventus*)
+  	omp_device_property=omp-device-properties-ventus
+  	omp_device_property_tmake_file="${omp_device_property_tmake_file} \$(srcdir)/config/riscv/t-omp-device"
+  	;;
     *)
   	AC_MSG_ERROR([unknown offload target specified])
   	;;

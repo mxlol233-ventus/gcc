@@ -17,11 +17,11 @@ AC_MSG_RESULT($enable_version_specific_runtime_libs)
 # We would like our source tree to be readonly. However when releases or
 # pre-releases are generated, the flex/bison generated files as well as the
 # various formats of manuals need to be included along with the rest of the
-# sources.  Therefore we have --enable-generated-files-in-srcdir to do 
+# sources.  Therefore we have --enable-generated-files-in-srcdir to do
 # just that.
 AC_MSG_CHECKING([for --enable-generated-files-in-srcdir])
 LIBGOMP_ENABLE(generated-files-in-srcdir, no, ,
-   [put copies of generated files in source dir intended for creating source 
+   [put copies of generated files in source dir intended for creating source
     tarballs for users without texinfo bison or flex.],
    permit yes|no)
 AC_MSG_RESULT($enable_generated_files_in_srcdir)
@@ -61,7 +61,7 @@ target_alias=${target_alias-$host_alias}
 #  -Wall:  turns on all automake warnings...
 #  -Wno-portability:  ...except this one, since GNU make is required.
 #  -Wno-override: ... and this one, since we do want this in testsuite.
-AM_INIT_AUTOMAKE([1.9.0 foreign no-dist -Wall -Wno-portability -Wno-override])
+AM_INIT_AUTOMAKE([1.9.0 foreign subdir-objects no-dist -Wall -Wno-portability -Wno-override])
 AM_ENABLE_MULTILIB(, ..)
 
 GCC_WITH_TOOLEXECLIBDIR
@@ -188,7 +188,7 @@ case "$host" in
   *-*-rtems*)
     # RTEMS supports Pthreads, but the library is not available at GCC build time.
     ;;
-  nvptx*-*-* | amdgcn*-*-*)
+  nvptx*-*-* | amdgcn*-*-* | ventus*-*-*)
     # NVPTX does not support Pthreads, has its own code replacement.
     libgomp_use_pthreads=no
     # NVPTX is an accelerator-only target

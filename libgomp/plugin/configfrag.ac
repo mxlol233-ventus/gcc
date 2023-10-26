@@ -42,6 +42,7 @@ AC_CHECK_FUNCS_ONCE(secure_getenv __secure_getenv getuid geteuid getgid getegid)
 
 PLUGIN_NVPTX=0
 PLUGIN_GCN=0
+PLUGIN_RISCV_VENTUS=0
 # Parse '--enable-offload-targets', figure out the corresponding libgomp
 # plugins, and configure to find the corresponding offload compilers.
 # 'offload_plugins' and 'offload_targets' will be populated in the same order.
@@ -98,6 +99,12 @@ if test x"$enable_offload_targets" != x; then
 	     ;;
 	esac
 	;;
+	ventus*)
+
+		tgt_plugin=ventus
+		PLUGIN_RISCV_VENTUS=1
+
+	;;
       *)
 	AC_MSG_ERROR([unknown offload target specified])
 	;;
@@ -127,3 +134,4 @@ AC_DEFINE_UNQUOTED(OFFLOAD_PLUGINS, "$offload_plugins",
   [Define to offload plugins, separated by commas.])
 AM_CONDITIONAL([PLUGIN_NVPTX], [test $PLUGIN_NVPTX = 1])
 AM_CONDITIONAL([PLUGIN_GCN], [test $PLUGIN_GCN = 1])
+AM_CONDITIONAL([PLUGIN_RISCV_VENTUS], [test $PLUGIN_RISCV_VENTUS = 1])

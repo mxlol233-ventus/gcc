@@ -232,6 +232,7 @@ enum gomp_map_kind
 /* #define GOMP_DEVICE_INTEL_MIC	6 removed.  */
 /* #define GOMP_DEVICE_HSA		7 removed.  */
 #define GOMP_DEVICE_GCN			8
+#define GOMP_DEVICE_RISCV_GPU			9
 
 /* We have a compatibility issue.  OpenMP 5.2 introduced
    omp_initial_device with value of -1 which clashes with our
@@ -285,6 +286,7 @@ enum gomp_map_kind
 #define GOMP_VERSION	2
 #define GOMP_VERSION_NVIDIA_PTX 1
 #define GOMP_VERSION_GCN 3
+#define GOMP_VERSION_VENTUS 3
 
 #define GOMP_VERSION_PACK(LIB, DEV) (((LIB) << 16) | (DEV))
 #define GOMP_VERSION_LIB(PACK) (((PACK) >> 16) & 0xffff)

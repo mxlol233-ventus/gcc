@@ -1,0 +1,6 @@
+PATH=`pwd`/../../.install/bin:$PATH ../configure --prefix=`pwd`/../../.install \
+--enable-languages=c,c++ \
+--disable-bootstrap \
+--disable-multilib \
+--enable-offload-targets=ventus-none=`pwd`/../../.install/ventus-none/ \
+CFLAGS="-O0 -ggdb3" CXXFLAGS="-O0 -ggdb3"

@@ -459,7 +459,7 @@ get_symbol_initial_value (lto_symtab_encoder_t encoder, tree expr)
 
 
 /* Output reference to tree T to the stream.
-   Assume that T is already in encoder cache. 
+   Assume that T is already in encoder cache.
    This is used to stream tree bodies where we know the DFS walk arranged
    everything to cache.  Must be matched with stream_read_tree_ref.  */
 
@@ -3186,6 +3186,8 @@ lto_write_mode_table (void)
   struct output_block *ob;
   ob = create_output_block (LTO_section_mode_table);
   bitpack_d bp = bitpack_create (ob->main_stream);
+  // pack the `NUM_POLY_INT_COEFFS`
+  bp_pack_value (&bp, NUM_POLY_INT_COEFFS, 8);
 
   /* Ensure that for GET_MODE_INNER (m) != m we have
      also the inner mode marked.  */

@@ -588,7 +588,7 @@ lto_location_cache::input_location_and_block (location_t *loc,
 
   /* This optimization saves location cache operations during gimple
      streaming.  */
-     
+
   if (current_file == stream_file
       && current_line == stream_line
       && current_col == stream_col
@@ -1825,7 +1825,7 @@ lto_input_scc (class lto_input_block *ib, class data_in *data_in,
 
 /* Read reference to tree from IB and DATA_IN.
    This is used for streaming tree bodies where we know that
-   the tree is already in cache or is indexable and 
+   the tree is already in cache or is indexable and
    must be matched with stream_write_tree_ref.  */
 
 tree
@@ -1998,6 +1998,9 @@ lto_input_mode_table (struct lto_file_decl_data *file_data)
 				header->string_size, vNULL);
   bitpack_d bp = streamer_read_bitpack (&ib);
 
+  // unpack host `NUM_POLY_INT_COEFFS`
+  uint8_t host_poly_int_coeffs = bp_unpack_value(&bp, 8);
+
   table[VOIDmode] = VOIDmode;
   table[BLKmode] = BLKmode;
   unsigned int m;
@@ -2005,10 +2008,10 @@ lto_input_mode_table (struct lto_file_decl_data *file_data)
     {
       enum mode_class mclass
 	= bp_unpack_enum (&bp, mode_class, MAX_MODE_CLASS);
-      poly_uint16 size = bp_unpack_poly_value (&bp, 16);
-      poly_uint16 prec = bp_unpack_poly_value (&bp, 16);
-      machine_mode inner = (machine_mode) bp_unpack_value (&bp, 8);
-      poly_uint16 nunits = bp_unpack_poly_value (&bp, 16);
+      poly_uint16 size = bp_unpack_poly_value(&bp, 16, host_poly_int_coeffs);
+      poly_uint16 prec = bp_unpack_poly_value(&bp, 16, host_poly_int_coeffs);
+      machine_mode inner = (machine_mode)bp_unpack_value(&bp, 8);
+      poly_uint16 nunits = bp_unpack_poly_value(&bp, 16, host_poly_int_coeffs);
       unsigned int ibit = 0, fbit = 0;
       unsigned int real_fmt_len = 0;
       const char *real_fmt_name = NULL;

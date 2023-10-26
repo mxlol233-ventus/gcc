@@ -666,6 +666,8 @@ LIBGOMP_BUILD_VERSIONED_SHLIB_FALSE
 LIBGOMP_BUILD_VERSIONED_SHLIB_TRUE
 OPT_LDFLAGS
 SECTION_LDFLAGS
+PLUGIN_RISCV_VENTUS_FALSE
+PLUGIN_RISCV_VENTUS_TRUE
 PLUGIN_GCN_FALSE
 PLUGIN_GCN_TRUE
 PLUGIN_NVPTX_FALSE
@@ -11419,7 +11421,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11422 "configure"
+#line 11424 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -11525,7 +11527,7 @@ else
   lt_dlunknown=0; lt_dlno_uscore=1; lt_dlneed_uscore=2
   lt_status=$lt_dlunknown
   cat > conftest.$ac_ext <<_LT_EOF
-#line 11528 "configure"
+#line 11530 "configure"
 #include "confdefs.h"
 
 #if HAVE_DLFCN_H
@@ -14950,7 +14952,7 @@ case "$host" in
   *-*-rtems*)
     # RTEMS supports Pthreads, but the library is not available at GCC build time.
     ;;
-  nvptx*-*-* | amdgcn*-*-*)
+  nvptx*-*-* | amdgcn*-*-* | ventus*-*-*)
     # NVPTX does not support Pthreads, has its own code replacement.
     libgomp_use_pthreads=no
     # NVPTX is an accelerator-only target
@@ -15184,6 +15186,7 @@ done
 
 PLUGIN_NVPTX=0
 PLUGIN_GCN=0
+PLUGIN_RISCV_VENTUS=0
 # Parse '--enable-offload-targets', figure out the corresponding libgomp
 # plugins, and configure to find the corresponding offload compilers.
 # 'offload_plugins' and 'offload_targets' will be populated in the same order.
@@ -15240,6 +15243,12 @@ if test x"$enable_offload_targets" != x; then
 	     ;;
 	esac
 	;;
+	ventus*)
+
+		tgt_plugin=ventus
+		PLUGIN_RISCV_VENTUS=1
+
+	;;
       *)
 	as_fn_error $? "unknown offload target specified" "$LINENO" 5
 	;;
@@ -15284,6 +15293,14 @@ fi
 else
   PLUGIN_GCN_TRUE='#'
   PLUGIN_GCN_FALSE=
+fi
+
+ if test $PLUGIN_RISCV_VENTUS = 1; then
+  PLUGIN_RISCV_VENTUS_TRUE=
+  PLUGIN_RISCV_VENTUS_FALSE='#'
+else
+  PLUGIN_RISCV_VENTUS_TRUE='#'
+  PLUGIN_RISCV_VENTUS_FALSE=
 fi
 
 
@@ -17132,6 +17149,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PLUGIN_GCN_TRUE}" && test -z "${PLUGIN_GCN_FALSE}"; then
   as_fn_error $? "conditional \"PLUGIN_GCN\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${PLUGIN_RISCV_VENTUS_TRUE}" && test -z "${PLUGIN_RISCV_VENTUS_FALSE}"; then
+  as_fn_error $? "conditional \"PLUGIN_RISCV_VENTUS\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${LIBGOMP_BUILD_VERSIONED_SHLIB_TRUE}" && test -z "${LIBGOMP_BUILD_VERSIONED_SHLIB_FALSE}"; then

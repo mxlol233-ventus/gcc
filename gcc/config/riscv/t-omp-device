@@ -1,0 +1,4 @@
+omp-device-properties-ventus: $(srcdir)/config/gcn/gcn.cc
+	echo kind: gpu > $@
+	echo arch: riscv > $@
+	echo isa: none > $@

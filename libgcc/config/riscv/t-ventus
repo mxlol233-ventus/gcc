@@ -1,0 +1,13 @@
+LIB2ADDEH=
+LIB2FUNCS_EXCLUDE=__main
+
+override LIB2FUNCS_ST := $(filter-out __gcc_bcmp,$(LIB2FUNCS_ST))
+
+# Debug information is not useful, and probably uses broken relocations
+LIBGCC2_DEBUG_CFLAGS = -g0
+
+crt0.o: $(srcdir)/config/riscv/crt0.c
+	$(crt_compile) -c $<
+
+# Prevent building "advanced" stuff (for example, gcov support).
+INHIBIT_LIBC_CFLAGS = -Dinhibit_libc
