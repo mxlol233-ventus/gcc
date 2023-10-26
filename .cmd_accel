@@ -1,5 +1,4 @@
 PATH=`pwd`/../../.install/bin:$PATH ../configure --prefix=`pwd`/../../.install \
---enable-maintainer-mode \
 --target=ventus-none \
 --enable-languages=c \
 --enable-as-accelerator-for=x86_64-pc-linux-gnu \

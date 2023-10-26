@@ -17,23 +17,22 @@
    see the files COPYING3 and COPYING.RUNTIME respectively.  If not, see
    <http://www.gnu.org/licenses/>.  */
 
-#include "collect-utils.h"
 #include "config.h"
-#include "coretypes.h"
-#include "diagnostic.h"
-#include "elf.h"
-#include "gomp-constants.h"
-#include "intl.h"
-#include "obstack.h"
-#include "simple-object.h"
 #include "system.h"
-#include <elf.h>
+#include "coretypes.h"
+#include "obstack.h"
+#include "diagnostic.h"
+#include "intl.h"
 #include <libgen.h>
+#include "collect-utils.h"
+#include "gomp-constants.h"
+#include "simple-object.h"
+#include <elf.h>
 #include <stdio.h>
 
 const char tool_name[] = "ventus mkoffload";
 
-static const char *gcn_dumpbase;
+static const char *ventus_dumpbase;
 static struct obstack files_to_cleanup;
 enum offload_abi offload_abi = OFFLOAD_ABI_UNSET;
 
@@ -207,9 +206,79 @@ static bool copy_early_debug_info(const char *infile, const char *outfile) {
   return true;
 }
 
-int main(int argc, char **argv) {
-  printf("hello ventus!\n");
+static const char *generate_temp_file(const char *postfix) {
 
+  const char* temp_name = concat(dumppfx, postfix, NULL);
+
+  const char *out;
+  if (save_temps)
+    out = temp_name;
+  else
+    out = make_temp_file(postfix);
+  obstack_ptr_grow(&files_to_cleanup, out);
+  return out;
+}
+
+
+
+/* Read the whole input file.  It will be NUL terminated (but
+   remember, there could be a NUL in the file itself.  */
+
+static const char *
+read_file (FILE *stream, size_t *plen)
+{
+  size_t alloc = 16384;
+  size_t base = 0;
+  char *buffer;
+
+  if (!fseek (stream, 0, SEEK_END))
+    {
+      /* Get the file size.  */
+      long s = ftell (stream);
+      if (s >= 0)
+	alloc = s + 100;
+      fseek (stream, 0, SEEK_SET);
+    }
+  buffer = XNEWVEC (char, alloc);
+
+  for (;;)
+    {
+      size_t n = fread (buffer + base, 1, alloc - base - 1, stream);
+
+      if (!n)
+	break;
+      base += n;
+      if (base + 1 == alloc)
+	{
+	  alloc *= 2;
+	  buffer = XRESIZEVEC (char, buffer, alloc);
+	}
+    }
+  buffer[base] = 0;
+  *plen = base;
+  return buffer;
+}
+
+
+static const char *
+prepare_target_image (FILE *in, FILE *out, uint32_t omp_requires)
+{
+
+ size_t len = 0;
+  const char *input = read_file (in, &len);
+  const char *comma;
+  //id_map const *id;
+  unsigned obj_count = 0;
+  unsigned ix;
+  const char *sm_ver = NULL, *version = NULL;
+  const char *sm_ver2 = NULL, *version2 = NULL;
+  size_t file_cnt = 0;
+  size_t *file_idx = XALLOCAVEC (size_t, len);
+
+}
+
+
+int main(int argc, char **argv) {
   FILE *in = stdin;
   FILE *out = stdout;
   FILE *cfile = stdout;
@@ -306,23 +375,14 @@ int main(int argc, char **argv) {
   if (!(fopenacc ^ fopenmp))
     fatal_error(input_location, "either -fopenacc or -fopenmp must be set");
 
-  const char *abi;
-  switch (offload_abi) {
-  case OFFLOAD_ABI_LP64:
-    abi = "-mabi=lp64d";
-    break;
-  case OFFLOAD_ABI_ILP32:
-    abi = "-mabi=ipl32d";
-    break;
-  default:
-    gcc_unreachable();
-  }
+  const char *abi =  "-mabi=ilp32d";
+
 
   /* Build arguments for compiler pass.  */
   struct obstack cc_argv_obstack;
   obstack_init(&cc_argv_obstack);
   obstack_ptr_grow(&cc_argv_obstack, driver);
-  obstack_ptr_grow(&cc_argv_obstack, "-S");
+  // obstack_ptr_grow(&cc_argv_obstack, "-S");
 
   if (save_temps)
     obstack_ptr_grow(&cc_argv_obstack, "-save-temps");
@@ -343,37 +403,31 @@ int main(int argc, char **argv) {
   if (!dumppfx)
     dumppfx = outname;
 
-  gcn_dumpbase = concat(dumppfx, ".c", NULL);
+  ventus_dumpbase = concat(dumppfx, ".c", NULL);
 
-  const char *gcn_cfile_name;
+  const char *ventus_cfile_name;
   if (save_temps)
-    gcn_cfile_name = gcn_dumpbase;
+    ventus_cfile_name = ventus_dumpbase;
   else
-    gcn_cfile_name = make_temp_file(".c");
-  obstack_ptr_grow(&files_to_cleanup, gcn_cfile_name);
+    ventus_cfile_name = make_temp_file(".c");
+  obstack_ptr_grow(&files_to_cleanup, ventus_cfile_name);
 
-  cfile = fopen(gcn_cfile_name, "w");
+  cfile = fopen(ventus_cfile_name, "w");
   if (!cfile)
-    fatal_error(input_location, "cannot open '%s'", gcn_cfile_name);
+    fatal_error(input_location, "cannot open '%s'", ventus_cfile_name);
 
   if (offload_abi == OFFLOAD_ABI_LP64) {
     const char *mko_dumpbase = concat(dumppfx, ".mkoffload", NULL);
 
-    const char *gcn_s1_name;
-    const char *gcn_s2_name;
-    const char *gcn_o_name;
+    const char *ventus_obj_name;
 
     if (save_temps) {
-      gcn_s1_name = concat(mko_dumpbase, ".1.s", NULL);
-      gcn_s2_name = concat(mko_dumpbase, ".2.s", NULL);
+      ventus_obj_name = concat(mko_dumpbase, ".o", NULL);
     } else {
-      gcn_s1_name = make_temp_file(".mkoffload.1.s");
-      gcn_s2_name = make_temp_file(".mkoffload.2.s");
+      ventus_obj_name = make_temp_file(".mkoffload.o");
     }
 
-    obstack_ptr_grow(&files_to_cleanup, gcn_s1_name);
-    obstack_ptr_grow(&files_to_cleanup, gcn_s2_name);
-    obstack_ptr_grow(&files_to_cleanup, gcn_o_name);
+    obstack_ptr_grow(&files_to_cleanup, ventus_obj_name);
 
     obstack_ptr_grow(&cc_argv_obstack, "-dumpdir");
     obstack_ptr_grow(&cc_argv_obstack, "");
@@ -383,7 +437,7 @@ int main(int argc, char **argv) {
     obstack_ptr_grow(&cc_argv_obstack, "");
 
     obstack_ptr_grow(&cc_argv_obstack, "-o");
-    obstack_ptr_grow(&cc_argv_obstack, gcn_s1_name);
+    obstack_ptr_grow(&cc_argv_obstack, ventus_obj_name);
     obstack_ptr_grow(&cc_argv_obstack, NULL);
     const char **cc_argv = XOBFINISH(&cc_argv_obstack, const char **);
 
@@ -434,7 +488,7 @@ int main(int argc, char **argv) {
     obstack_ptr_grow(&cc_argv_obstack, "");
 
     obstack_ptr_grow(&ld_argv_obstack, "-o");
-    obstack_ptr_grow(&ld_argv_obstack, gcn_o_name);
+    // obstack_ptr_grow(&ld_argv_obstack, ventus_o_name);
     obstack_ptr_grow(&ld_argv_obstack, NULL);
     const char **ld_argv = XOBFINISH(&ld_argv_obstack, const char **);
 
@@ -458,7 +512,20 @@ int main(int argc, char **argv) {
     fork_execute(cc_argv[0], CONST_CAST(char **, cc_argv), true, ".gcc_args");
     obstack_free(&cc_argv_obstack, NULL);
     unsetenv("GCC_OFFLOAD_OMP_REQUIRES_FILE");
+
+    in = fopen(omp_requires_file, "rb");
+    if (!in)
+      fatal_error(input_location, "cannot open omp_requires file %qs",
+                  omp_requires_file);
+    uint32_t omp_requires;
+    if (fread(&omp_requires, sizeof(omp_requires), 1, in) != 1)
+      fatal_error(input_location, "cannot read omp_requires file %qs",
+                  omp_requires_file);
+    fclose(in);
+
   }
+
+
 
   return -1;
 }

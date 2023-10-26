@@ -21,6 +21,17 @@
 
 #include <stdio.h>
 
+struct ventus_image_desc
+{
+  struct ventus_image {
+    size_t size;
+    void *image;
+  } *ventus_image;
+  const unsigned kernel_count;
+  const unsigned global_variable_count;
+};
+
+
 const char *
 GOMP_OFFLOAD_get_name (void)
 {
